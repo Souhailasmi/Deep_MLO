@@ -1,11 +1,15 @@
-queries =  { 'bipartite_tumor_stroma' : 
+queries =  {  
+       
+'bipartite_tumor_stroma' : 
  
  '''SELECT
   distance,
   cell_id_1,
   cell_id_2,
   tissue_category_1,
-  tissue_category_2
+  tissue_category_2,
+  phenotype_1,
+  phenotype_2,
 FROM (
   SELECT
     table_1.cell_id_1,
@@ -16,6 +20,8 @@ FROM (
     table_2.y_2,
     tissue_category_1,
     tissue_category_2 ,
+    phenotype_1,
+    phenotype_2,
 
     SQRT(POW((x_1-x_2),2)+POWER((y_1-y_2),2)) AS distance
   FROM (
@@ -23,19 +29,24 @@ FROM (
       cell_x_position AS x_1,
       cell_y_position AS y_1,
       cell_id AS cell_id_1,
-      tissue_category as tissue_category_1
+      tissue_category as tissue_category_1,
+      phenotype as phenotype_1,
     FROM
-      `advance-sonar-306410.deepmelo.cell_data`
+      `advance-sonar-306410.deepmelo.{table}`
       Where (tissue_category = 'stroma' )) AS table_1
   CROSS JOIN (
     SELECT
       cell_x_position AS x_2,
       cell_y_position AS y_2,
       cell_id AS cell_id_2,
-      tissue_category as tissue_category_2
+      tissue_category as tissue_category_2,
+      phenotype as phenotype_2
     FROM
-      `advance-sonar-306410.deepmelo.cell_data` 
-      Where (tissue_category = 'tumor')) AS table_2 )''',
+      `advance-sonar-306410.deepmelo.{table}` 
+      Where (tissue_category = 'tumor')) AS table_2 )
+      
+      
+WHERE (distance <{thrd})      ''',
  
  
  #####################################
@@ -80,7 +91,7 @@ FROM (
       cell_id AS cell_id_1,
       tissue_category as tissue_category_1
     FROM
-      `advance-sonar-306410.deepmelo.cell_data`
+      `advance-sonar-306410.deepmelo.{table}`
       Where (cell_id>=0)  ) AS table_1
   CROSS JOIN (
     SELECT
@@ -89,10 +100,10 @@ FROM (
       cell_id AS cell_id_2,
       tissue_category as tissue_category_2
     FROM
-      `advance-sonar-306410.deepmelo.cell_data` 
+      `advance-sonar-306410.deepmelo.{table}` 
       Where (cell_id>0)) AS table_2 )
 
-   WHERE cell_id_1 <> cell_id_2
+   WHERE cell_id_1 < cell_id_2
 
        )
 
@@ -142,7 +153,7 @@ FROM (
       cell_id AS cell_id_1,
       tissue_category as tissue_category_1
     FROM
-      `advance-sonar-306410.deepmelo.cell_data`
+      `advance-sonar-306410.deepmelo.{table}`
       Where (cell_id>=0)  ) AS table_1
   CROSS JOIN (
     SELECT
@@ -151,10 +162,10 @@ FROM (
       cell_id AS cell_id_2,
       tissue_category as tissue_category_2
     FROM
-      `advance-sonar-306410.deepmelo.cell_data` 
+      `advance-sonar-306410.deepmelo.{table}` 
       Where (tissue_category = 'stroma')) AS table_2 )
 
-   WHERE cell_id_1 <> cell_id_2
+   WHERE cell_id_1 < cell_id_2
 
        )
 
@@ -205,7 +216,7 @@ FROM (
       cell_id AS cell_id_1,
       tissue_category as tissue_category_1
     FROM
-      `advance-sonar-306410.deepmelo.cell_data`
+      `advance-sonar-306410.deepmelo.{table}`
       Where (cell_id>=0)  ) AS table_1
   CROSS JOIN (
     SELECT
@@ -214,10 +225,10 @@ FROM (
       cell_id AS cell_id_2,
       tissue_category as tissue_category_2
     FROM
-      `advance-sonar-306410.deepmelo.cell_data` 
+      `advance-sonar-306410.deepmelo.{table}` 
       Where (tissue_category = 'tumor')) AS table_2 )
 
-   WHERE cell_id_1 <> cell_id_2
+   WHERE cell_id_1 <cell_id_2
 
        )
 
