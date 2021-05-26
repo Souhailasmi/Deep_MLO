@@ -110,6 +110,13 @@ def get_phenotype (marker):
     elif marker == 'CD68p':
         return 'macrophages'
     
+    elif marker == 'SOX10p_CD56p':
+        return 'DP1'
+    
+    elif marker == 'CD11cp_CD68p':
+        return 'DP2'
+    
+    
     else :
         return 'MISSING'
 
@@ -332,7 +339,7 @@ def G_cross_function(edges, min_radius=10, max_radius=50, radius_numbers=20, TIL
     
     ## This condition is based ont the fact that we are working with the border cell
     
-    TILs_condition = (df.phenotype_1.apply(lambda x: x in TILs)) | (df.phenotype_2.apply(lambda x: x in TILs))
+    TILs_condition = (df.phenotype_1.apply(lambda x: x in TILs) & df.phenotype_2.apply(lambda x: x == 'tumor')) | (df.phenotype_1.apply(lambda x: x == 'tumor') & df.phenotype_2.apply(lambda x: x in TILs))
     df = df[TILs_condition]
     total_number = len(df)
     if total_number == 0:
@@ -647,3 +654,17 @@ def add_null_column(df, actual_columns):
         if not(actual in df_columns):
             df_copy[actual] = 0
     return df_copy 
+
+
+
+########################################################################################################
+
+def regions(tissue_category, border):
+    
+    if border==True :
+        return 'border'
+    else:
+        return tissue_category
+    
+    
+#####################################################################################################    
